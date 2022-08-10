@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+final pdfSourceProvider = StateProvider((_) => '');
 // final NumCountProvider = StateProvider((_) => 1.0);
 // final tempoProvider = StateProvider((_) => 1.0);
 // final setProvider = StateProvider((_) => 3.0);

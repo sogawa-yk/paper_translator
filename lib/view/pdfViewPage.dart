@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paper_translation/providers/providers.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
-class pdfViewPage extends StatefulWidget {
-  @override
-  _pdfViewPage createState() => _pdfViewPage();
-}
-
-class _pdfViewPage extends State<pdfViewPage> {
+class pdfViewPage extends ConsumerWidget {
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   var tmp = 0;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Syncfusion Flutter PDF Viewer'),
@@ -49,7 +40,7 @@ class _pdfViewPage extends State<pdfViewPage> {
         children: [
           Expanded(
               child: SfPdfViewer.network(
-            'https://cdn.syncfusion.com/content/PDFViewer/flutter-succinctly.pdf',
+            ref.watch(pdfSourceProvider),
             key: _pdfViewerKey,
           )),
           Expanded(
