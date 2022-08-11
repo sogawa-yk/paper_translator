@@ -31,6 +31,7 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^2.0.0-dev.9
   syncfusion_flutter_pdfviewer: ^20.2.43-beta
+  path_provider: any
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -53,6 +54,21 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  fonts:
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/NotoSansJP-Black.otf
+          weight: 900
+        - asset: assets/fonts/NotoSansJP-Bold.otf
+          weight: 700
+        - asset: assets/fonts/NotoSansJP-Light.otf
+          weight: 300
+        - asset: assets/fonts/NotoSansJP-Medium.otf
+          weight: 500
+        - asset: assets/fonts/NotoSansJP-Regular.otf
+          weight: 400
+        - asset: assets/fonts/NotoSansJP-Thin.otf
+          weight: 100
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

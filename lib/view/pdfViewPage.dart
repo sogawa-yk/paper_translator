@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paper_translation/providers/providers.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import "package:paper_translation/repository/deepl_translate.dart";
 
 class pdfViewPage extends ConsumerWidget {
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
 
   var tmp = 0;
+  //翻訳前，翻訳語テキストフィールドの内容のコントローラ
+  final _originalTextController = TextEditingController();
+  final _translatedTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -21,7 +25,14 @@ class pdfViewPage extends ConsumerWidget {
               semanticLabel: 'Translate',
             ),
             onPressed: () {
-              tmp++; // 翻訳ボタンをつける
+              //tmp++; // 翻訳ボタンをつける
+              //翻訳前テキストフィールドのテキストを読み込む
+              String txt = _originalTextController.text;
+              //DeeplAPIを利用して翻訳した結果を格納
+              final translatedRes = callAPI(txt);
+              //翻訳語テキストフィールドに翻訳結果を反映させる
+              translatedRes
+                  .then((value) => _translatedTextController.text = value);
             },
           ),
           IconButton(
@@ -46,7 +57,16 @@ class pdfViewPage extends ConsumerWidget {
           Expanded(
               child: Column(
             children: [
-              Expanded(child: Text('Translation results')),
+              const Text('Translation results'),
+              Expanded(
+                  child: TextField(
+                controller: _translatedTextController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Translated text will appear here",
+                ),
+              )),
               const Divider(
                 height: 20,
                 thickness: 2,
@@ -56,8 +76,9 @@ class pdfViewPage extends ConsumerWidget {
               ),
               Expanded(
                   child: TextField(
+                controller: _originalTextController,
                 maxLines: null,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Enter text you want to translate'),
               ))
