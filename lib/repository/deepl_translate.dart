@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import "package:paper_translation/data/apikey.dart";
 
-String apiKey = apiKeySecret;
 /*
 callAPIメソッド
 引数txt:翻訳される前の文章
@@ -10,18 +8,14 @@ callAPIメソッド
 */
 Future<String> callAPI(String txt) async {
   //httpリクエストを送るURL
-  final Uri url = Uri.parse("https://api-free.deepl.com/v2/translate");
+  final Uri url = Uri.parse("http://127.0.0.1:8000/translate/");
   //httpリクエストのbodyとなる部分
-  var sendBody = {
-    "auth_key": apiKey,
-    "text": txt,
-    "source_lang": 'EN',
-    "target_lang": 'JA',
-  };
+  var sendBody = json.encode({"text": txt});
   //httpリクエストを送信，結果を格納
-  var response = await http.post(url, body: sendBody);
+  var response = await http.post(url,
+      headers: {'Content-Type': 'application/json'}, body: sendBody);
   //httpリクエストの結果をjson形式からmap形式にdecode
-  final res = json.decode(response.body);
+  final res = json.decode(utf8.decode(response.bodyBytes));
   //httpリクエストの結果は日本語が文字化けするため(おそらく変な形式にdecodeされているため)，UTF-8にdecodeを行う
-  return utf8.decode(res["translations"][0]["text"].runes.toList());
+  return res['text'];
 }
