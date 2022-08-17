@@ -6,11 +6,11 @@ callAPIメソッド
 引数txt:翻訳される前の文章
 引数に渡された文章をdeeplAPIに渡して，翻訳された文章をString型で返す関数
 */
-Future<String> callAPI(String txt) async {
+Future<String> callAPI(String txt, String uri) async {
   //httpリクエストを送るURL
   final Uri url = Uri.parse("http://127.0.0.1:8000/translate/");
   //httpリクエストのbodyとなる部分
-  var sendBody = json.encode({"text": txt});
+  var sendBody = json.encode({"text": txt, "uri": uri});
   //httpリクエストを送信，結果を格納
   var response = await http.post(url,
       headers: {'Content-Type': 'application/json'}, body: sendBody);

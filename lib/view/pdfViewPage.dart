@@ -83,7 +83,8 @@ class pdfViewPage extends ConsumerWidget {
                   //翻訳前テキストフィールドのテキストを読み込む
                   String txt = _originalTextController.text;
                   //DeeplAPIを利用して翻訳した結果を格納
-                  final translatedRes = callAPI(txt);
+                  final translatedRes =
+                      callAPI(txt, ref.watch(pdfSourceProvider.state).state);
                   //翻訳語テキストフィールドに翻訳結果を反映させる
                   translatedRes
                       .then((value) => _translatedTextController.text = value);
