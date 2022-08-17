@@ -26,6 +26,7 @@ class pdfViewPage extends ConsumerWidget {
             ),
             onPressed: () {
               //tmp++; // 翻訳ボタンをつける
+              /*
               //翻訳前テキストフィールドのテキストを読み込む
               String txt = _originalTextController.text;
               //DeeplAPIを利用して翻訳した結果を格納
@@ -33,6 +34,7 @@ class pdfViewPage extends ConsumerWidget {
               //翻訳語テキストフィールドに翻訳結果を反映させる
               translatedRes
                   .then((value) => _translatedTextController.text = value);
+              */
             },
           ),
           IconButton(
@@ -77,6 +79,15 @@ class pdfViewPage extends ConsumerWidget {
               Expanded(
                   child: TextField(
                 controller: _originalTextController,
+                onChanged: (text) {
+                  //翻訳前テキストフィールドのテキストを読み込む
+                  String txt = _originalTextController.text;
+                  //DeeplAPIを利用して翻訳した結果を格納
+                  final translatedRes = callAPI(txt);
+                  //翻訳語テキストフィールドに翻訳結果を反映させる
+                  translatedRes
+                      .then((value) => _translatedTextController.text = value);
+                },
                 maxLines: null,
                 decoration: const InputDecoration(
                     border: InputBorder.none,
