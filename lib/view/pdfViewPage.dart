@@ -30,87 +30,95 @@ class pdfViewPage extends ConsumerWidget {
     return ret!;
   }
 
-  Future<void> translate() async {
+  Future<void> translateClipboard() async {
     String clipboardText = await getClipboardText();
     //翻訳前テキストフィールドのテキストにクリップボードのテキストを書き込む
-    //_originalTextController.text = await getClipboardText();
+    _originalTextController.text = await getClipboardText();
+    //DeepLAPIに翻訳するテキストを送信して結果を反映させる
+    useAPI(clipboardText);
+  }
+
+  void useAPI(String sendText) {
     //DeeplAPIを利用して翻訳した結果を格納
-    final translatedRes = callAPI(clipboardText);
+    final translatedRes = callAPI(sendText);
     //翻訳語テキストフィールドに翻訳結果を反映させる
     translatedRes.then((value) => _translatedTextController.text = value);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return FocusableActionDetector(
-      autofocus: true,
-      shortcuts: {_copyKeySet: Translate()},
-      actions: {Translate: CallbackAction(onInvoke: (intent) => translate())},
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Syncfusion Flutter PDF Viewer'),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(
-                Icons.g_translate,
-                color: Colors.white,
-                semanticLabel: 'Translate',
-              ),
-              onPressed: () {
-                //tmp++; // 翻訳ボタンをつける
-              },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Syncfusion Flutter PDF Viewer'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(
+              Icons.g_translate,
+              color: Colors.white,
+              semanticLabel: 'Translate',
             ),
-            IconButton(
-              icon: const Icon(
-                Icons.bookmark,
-                color: Colors.white,
-                semanticLabel: 'Bookmark',
-              ),
-              onPressed: () {
-                _pdfViewerKey.currentState?.openBookmarkView();
-              },
+            onPressed: () {
+              //tmp++; // 翻訳ボタンをつける
+            },
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.bookmark,
+              color: Colors.white,
+              semanticLabel: 'Bookmark',
             ),
-          ],
-        ),
-        body: Row(
-          children: [
-            Expanded(
-                child: SfPdfViewer.network(
-              ref.watch(pdfSourceProvider),
-              key: _pdfViewerKey,
-            )),
-            Expanded(
-                child: Column(
-              children: [
-                const Text('Translation results'),
-                Expanded(
-                    child: TextField(
-                  controller: _translatedTextController,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Translated text will appear here",
-                  ),
-                )),
-                const Divider(
-                  height: 20,
-                  thickness: 2,
-                  indent: 0,
-                  endIndent: 0,
-                  color: Colors.black,
+            onPressed: () {
+              _pdfViewerKey.currentState?.openBookmarkView();
+            },
+          ),
+        ],
+      ),
+      body: Row(
+        children: [
+          Expanded(
+              child: FocusableActionDetector(
+                  autofocus: true,
+                  shortcuts: {_copyKeySet: Translate()},
+                  actions: {
+                    Translate: CallbackAction(
+                        onInvoke: (intent) => translateClipboard())
+                  },
+                  child: SfPdfViewer.network(
+                    ref.watch(pdfSourceProvider),
+                    key: _pdfViewerKey,
+                  ))),
+          Expanded(
+              child: Column(
+            children: [
+              const Text('Translation results'),
+              Expanded(
+                  child: TextField(
+                controller: _translatedTextController,
+                maxLines: null,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Translated text will appear here",
                 ),
-                Expanded(
-                    child: TextField(
-                  controller: _originalTextController,
-                  maxLines: null,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Enter text you want to translate'),
-                ))
-              ],
-            ))
-          ],
-        ),
+              )),
+              const Divider(
+                height: 20,
+                thickness: 2,
+                indent: 0,
+                endIndent: 0,
+                color: Colors.black,
+              ),
+              Expanded(
+                  child: TextField(
+                controller: _originalTextController,
+                maxLines: null,
+                onChanged: (value) => useAPI(value),
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Enter text you want to translate'),
+              ))
+            ],
+          ))
+        ],
       ),
     );
   }
