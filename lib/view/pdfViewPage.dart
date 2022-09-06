@@ -1,3 +1,6 @@
+import 'dart:html';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paper_translation/providers/providers.dart';
@@ -17,10 +20,30 @@ class pdfViewPage extends ConsumerWidget {
   final _translatedTextController = TextEditingController();
 
   //Ctrl+CでAPIを起動するためのキーセット
-  final _copyKeySet = LogicalKeySet(
+  var copyKeySetWindows = LogicalKeySet(
     LogicalKeyboardKey.control,
     LogicalKeyboardKey.keyC,
   );
+
+  //Cmd+CでAPIを起動するためのキーセット
+  var copyKeySetMac = LogicalKeySet(
+    LogicalKeyboardKey.meta,
+    LogicalKeyboardKey.keyC,
+  );
+
+  LogicalKeySet copyKeySet = LogicalKeySet(LogicalKeyboardKey.keyC);
+
+  pdfViewPage({Key? key}) : super(key: key) {
+    getPlatform();
+  }
+
+  void getPlatform() {
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
+      copyKeySet = copyKeySetMac;
+    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+      copyKeySet = copyKeySetWindows;
+    }
+  }
 
   //クリップボードのテキストを抽出して返す
   Future<String> getClipboardText() async {
@@ -82,7 +105,9 @@ class pdfViewPage extends ConsumerWidget {
           Expanded(
               child: FocusableActionDetector(
                   autofocus: true,
-                  shortcuts: {_copyKeySet: Translate()},
+                  shortcuts: {
+                    copyKeySet: Translate(),
+                  },
                   actions: {
                     Translate: CallbackAction(
                         onInvoke: (intent) => translateClipboard(ref))
@@ -91,7 +116,6 @@ class pdfViewPage extends ConsumerWidget {
                     ref.watch(pdfSourceProvider),
                     key: _pdfViewerKey,
                   ))),
-
           Expanded(
               child: Column(
             children: [
