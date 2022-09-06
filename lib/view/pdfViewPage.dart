@@ -27,20 +27,22 @@ class pdfViewPage extends ConsumerWidget {
     await Clipboard.getData(Clipboard.kTextPlain).then((value) {
       ret = value!.text;
     });
+    ret ??= "";
     return ret!;
   }
 
-  Future<void> translateClipboard() async {
+  Future<void> translateClipboard(WidgetRef ref) async {
     String clipboardText = await getClipboardText();
     //翻訳前テキストフィールドのテキストにクリップボードのテキストを書き込む
     _originalTextController.text = await getClipboardText();
     //DeepLAPIに翻訳するテキストを送信して結果を反映させる
-    useAPI(clipboardText);
+    useAPI(clipboardText, ref);
   }
 
-  void useAPI(String sendText) {
+  void useAPI(String sendText, WidgetRef ref) {
     //DeeplAPIを利用して翻訳した結果を格納
-    final translatedRes = callAPI(sendText);
+    final translatedRes =
+        callAPI(sendText, ref.watch(pdfSourceProvider.state).state);
     //翻訳語テキストフィールドに翻訳結果を反映させる
     translatedRes.then((value) => _translatedTextController.text = value);
   }
@@ -81,7 +83,7 @@ class pdfViewPage extends ConsumerWidget {
                   shortcuts: {_copyKeySet: Translate()},
                   actions: {
                     Translate: CallbackAction(
-                        onInvoke: (intent) => translateClipboard())
+                        onInvoke: (intent) => translateClipboard(ref))
                   },
                   child: SfPdfViewer.network(
                     ref.watch(pdfSourceProvider),
@@ -111,7 +113,7 @@ class pdfViewPage extends ConsumerWidget {
                   child: TextField(
                 controller: _originalTextController,
                 maxLines: null,
-                onChanged: (value) => useAPI(value),
+                onChanged: (value) => useAPI(value, ref),
                 decoration: const InputDecoration(
                     border: InputBorder.none,
                     hintText: 'Enter text you want to translate'),
