@@ -9,6 +9,7 @@ class Translate extends Intent {}
 
 class pdfViewPage extends ConsumerWidget {
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
+  PdfViewerController _pdfViewerController = PdfViewerController();
 
   var tmp = 0;
   //翻訳前，翻訳語テキストフィールドの内容のコントローラ
@@ -51,7 +52,7 @@ class pdfViewPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Syncfusion Flutter PDF Viewer'),
+        title: const Text(''),
         actions: <Widget>[
           IconButton(
             icon: const Icon(
@@ -70,7 +71,8 @@ class pdfViewPage extends ConsumerWidget {
               semanticLabel: 'Bookmark',
             ),
             onPressed: () {
-              _pdfViewerKey.currentState?.openBookmarkView();
+              //_pdfViewerKey.currentState?.openBookmarkView();
+              _pdfViewerController.zoomLevel = 2;
             },
           ),
         ],
@@ -89,6 +91,7 @@ class pdfViewPage extends ConsumerWidget {
                     ref.watch(pdfSourceProvider),
                     key: _pdfViewerKey,
                   ))),
+
           Expanded(
               child: Column(
             children: [
