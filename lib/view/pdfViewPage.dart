@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paper_translation/providers/providers.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import "package:paper_translation/repository/deepl_translate.dart";
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:fwfh_webview/fwfh_webview.dart';
 
 class pdfViewPage extends ConsumerWidget {
   final GlobalKey<SfPdfViewerState> _pdfViewerKey = GlobalKey();
@@ -50,9 +52,9 @@ class pdfViewPage extends ConsumerWidget {
       body: Row(
         children: [
           Expanded(
-              child: SfPdfViewer.network(
-            ref.watch(pdfSourceProvider),
-            key: _pdfViewerKey,
+              child: HtmlWidget(
+            '<iframe height=100 width=100 src="https://arxiv.org/pdf/1406.2661.pdf"></iframe>',
+            factoryBuilder: () => MyWidgetFactory(),
           )),
           Expanded(
               child: Column(
@@ -89,3 +91,5 @@ class pdfViewPage extends ConsumerWidget {
     );
   }
 }
+
+class MyWidgetFactory extends WidgetFactory with WebViewFactory {}
